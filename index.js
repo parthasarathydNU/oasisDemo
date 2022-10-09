@@ -1,70 +1,40 @@
-
-const initializeApp = require('firebase/app').initializeApp;
+// ========== IMPORTING LIBRARIES REQUIRED FOR CONNECTING TO FIREBASE DB =======
 
 const getFirestore = require('firebase/firestore').getFirestore;
+const onSnapshot = require('firebase/firestore').onSnapshot;
+const initializeApp = require('firebase/app').initializeApp;
 const collection = require('firebase/firestore').collection;
 const getDocs = require('firebase/firestore').getDocs;
 const setDoc = require('firebase/firestore').setDoc;
-
 const doc = require('firebase/firestore').doc;
-const onSnapshot = require('firebase/firestore').onSnapshot;
 
-// const query = require('firebase/firestore').query;
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-
-};
-
-// Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-
-const db = getFirestore(firebaseApp); // getting access to the actual database that is hosted
-
-const unsubIsecDoc = onSnapshot(doc(db, "buildings", "ISEC"), (doc) => {
-  console.log("\n\nListening to changes in the ISEC document under buildings collection");
-  console.log("Current data: ", doc.data());
-});
-
-const unsuBuildings = onSnapshot(collection(db, "buildings"), (res) => {
-
-  console.log("\n\nListening to changes in the buildings collection");
-
-  res.docChanges().forEach(change => {
-
-    const doc = {...change.doc.data() , id : change.doc.id};
-    console.log(doc, change.type);
-    // switch(change.type) {
-    //     case 'added' : 
-    //         // Adding the new data point from the db to the data array for the graph
-    //         data.push(doc);
-    //         break;
-
-    //     case 'modified' :
-    //         // Finding the index of the doc in the data array and replacing that element with the new data from the database
-    //         const index = data.findIndex(item => item.id === doc.id);
-    //         data[index] = doc;
-    //         break;
-
-    //     case 'removed' :
-    //         //removing the doc from the list of items in data array
-    //         data = data.filter(item => item.id !== doc.id);
-    //         break;
-
-    //     default :
-    //         break;
-    // }
-
-});
-});
-
+// ========== IMPORTING LIBRARIES REQUIRED FOR EXPRESS =======
 
 const express = require('express')
 var bodyParser = require('body-parser');
 
+
 // create application/json parser
 var jsonParser = bodyParser.json()
 
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCJwfWnay2-BlzKPk5DHR6oIAScp7ls7UU",
+  authDomain: "oasis-firebase-demo.firebaseapp.com",
+  projectId: "oasis-firebase-demo",
+  storageBucket: "oasis-firebase-demo.appspot.com",
+  messagingSenderId: "935035906028",
+  appId: "1:935035906028:web:5cc84bc0baff7a9f0902c9"
+};
+
+// INITIALIZE FIREBASE APP
+const firebaseApp = initializeApp(firebaseConfig);
+
+const db = getFirestore(firebaseApp); // getting access to the actual database that is hosted
+
+
+// ====== STARTING EXPRESS AP ==========
 const app = express()
 const port = 3000
 
@@ -72,11 +42,13 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-// buildings, mobilePhones
+// END POINT TO FETCH buildings or mobiles data from the firebase DB
+
 app.get('/getCollectionData/:collection', async (req, res) => {
 
   let collection = req.params.collection;
 
+  // fetch data from firebase
   let data = await getDataFromCollection(db, collection);
 
   // console.log(data);
@@ -92,17 +64,26 @@ app.post('/post/buildingData', jsonParser, async function (req, res) {
   let {document, fields}  = req.body;
 
   try{
+    // Post data to firebase db
     await addDataToCollection('buildings',document,fields)
+
   } catch (err){
+
     res.status(500).send(err);
   }
+
   res.status(200).send(`Succesfully added ${document} to buildings collection`);
+
 })
 
+// This is the function that starts the node app
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
+
+
+// ==== FUNCTIONS RELATED TO FIREBASE 
 
 // Demonstrating fetching data from firebase
 
@@ -130,3 +111,21 @@ async function addDataToCollection(collectionName, documentName, fields){
 
 
 
+
+// const unsubIsecDoc = onSnapshot(doc(db, "buildings", "ISEC"), (doc) => {
+//   console.log("\n\nListening to changes in the ISEC document under buildings collection");
+//   console.log("Current data: ", doc.data());
+// });
+
+// const unsuBuildings = onSnapshot(collection(db, "buildings"), (res) => {
+
+//   console.log("\n\nListening to changes in the buildings collection");
+
+//   res.docChanges().forEach(change => {
+
+//     const doc = {...change.doc.data() , id : change.doc.id};
+//     console.log(doc, change.type);
+
+
+// });
+// });

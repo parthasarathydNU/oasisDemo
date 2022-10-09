@@ -20,12 +20,7 @@ var jsonParser = bodyParser.json()
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCJwfWnay2-BlzKPk5DHR6oIAScp7ls7UU",
-  authDomain: "oasis-firebase-demo.firebaseapp.com",
-  projectId: "oasis-firebase-demo",
-  storageBucket: "oasis-firebase-demo.appspot.com",
-  messagingSenderId: "935035906028",
-  appId: "1:935035906028:web:5cc84bc0baff7a9f0902c9"
+
 };
 
 // INITIALIZE FIREBASE APP

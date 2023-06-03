@@ -1,4 +1,4 @@
-const { getCitiesFromFirebase, getDataOfCollectionFromFirebase, postDataToCollectionInFirebase } = require("./firebase");
+const { getCitiesFromFirebase, getDataOfCollectionFromFirebase, postDataToCollectionInFirebase, deleteDataFromCollectionInFirebase } = require("./firebase");
 
 // add controller functions here
 // export 
@@ -38,5 +38,16 @@ async function postDataToCollection(req, res) {
     }
 }
 
+// controller function to delete a given document from a collection
+async function deleteDataFromCollection(req, res) {
+    try {
+        const collectionName = req.params.collectionName;
+        const docId = req.params.docId;
+        await deleteDataFromCollectionInFirebase(collectionName, docId);
+        res.send("Document deleted successfully");
+    } catch (err) {
+        res.send("Error in deleting document " + err);
+    }
+}
 
-module.exports = { getCities, getDataOfCollection, postDataToCollection };
+module.exports = { getCities, getDataOfCollection, postDataToCollection, deleteDataFromCollection };

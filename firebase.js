@@ -1,5 +1,5 @@
 const initializeApp = require('firebase/app').initializeApp;
-const { getFirestore, collection, getDocs, addDoc } = require('firebase/firestore/lite');
+const { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } = require('firebase/firestore/lite');
 
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
@@ -28,7 +28,8 @@ async function getCitiesFromFirebase() {
 async function getDataOfCollectionFromFirebase(collectionName) {
     const collectionRef = collection(db, collectionName);
     const collectionSnapshot = await getDocs(collectionRef);
-    const collectionList = collectionSnapshot.docs.map(doc => doc.data());
+    // get doc id along with data as well
+    const collectionList = collectionSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     return collectionList;
 };
 
@@ -44,4 +45,13 @@ async function postDataToCollectionInFirebase(collectionName, data) {
 
 }
 
-module.exports = { getCitiesFromFirebase, getDataOfCollectionFromFirebase, postDataToCollectionInFirebase };
+// Method to delete a document from a given collection
+async function deleteDataFromCollectionInFirebase(collectionName, docId) {
+        // get collection reference 
+        const collectionRef = collection(db, collectionName);
+        // delete a document with a given id.
+        await deleteDoc(doc(collectionRef, docId));
+        console.log("Document deleted with ID: ", docId);
+}
+
+module.exports = { getCitiesFromFirebase, getDataOfCollectionFromFirebase, postDataToCollectionInFirebase, deleteDataFromCollectionInFirebase };

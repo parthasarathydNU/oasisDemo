@@ -1,4 +1,4 @@
-const { getCities, getDataOfCollection, postDataToCollection } = require('./controllers');
+const { getCities, getDataOfCollection, postDataToCollection, deleteDataFromCollection } = require('./controllers');
 
 const routes = [
     {
@@ -20,7 +20,14 @@ const routes = [
         url: '/collection/:collectionName',
         method: 'post',
         handler: (req, res) => postDataToCollection(req, res),
+    },
+    // route to delete a given document from a collection
+    {
+        url: '/collection/:collectionName/:docId',
+        method: 'delete',
+        handler: (req, res) => deleteDataFromCollection(req, res),
     }
+
 ];
 
 

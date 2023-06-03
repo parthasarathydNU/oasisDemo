@@ -1,5 +1,6 @@
 const initializeApp = require('firebase/app').initializeApp;
-const { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } = require('firebase/firestore/lite');
+const { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query } = require('firebase/firestore');
+const { onSnapshot } = require('firebase/firestore');
 
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
@@ -53,5 +54,31 @@ async function deleteDataFromCollectionInFirebase(collectionName, docId) {
         await deleteDoc(doc(collectionRef, docId));
         console.log("Document deleted with ID: ", docId);
 }
+
+// subscribe to changes in a collection
+const collections = ['buildings', 'cities', 'mobilePhones'];
+
+let subscriptions = [];
+
+collections.forEach(collectionName => {
+    const collectionRef = collection(db, collectionName);
+    const queryRef = query(collectionRef);
+
+    const unsubscribeFn = onSnapshot(queryRef, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            const docId = change.doc.id;
+            const docData = change.doc.data();
+            const changeType = change.type;
+
+            console.log();
+            console.log(`Change Type: ${changeType}`);
+            console.log(`Document ID: ${docId}`);
+            console.log('Document Data:', docData);
+            console.log();
+        });
+    });
+
+    subscriptions.push({ "name" : collectionName, "unsubscribe" : unsubscribeFn});
+});
 
 module.exports = { getCitiesFromFirebase, getDataOfCollectionFromFirebase, postDataToCollectionInFirebase, deleteDataFromCollectionInFirebase };
